@@ -17,7 +17,7 @@ class QuizController extends Controller
     {
         
         return view('dashboard.myquizzes', [
-            'quiz' => Quiz::all()
+            'quizzes' => Quiz::withCount('questions')->get()
         ]);
     }
 
@@ -38,8 +38,10 @@ class QuizController extends Controller
             'title'=>'required|string|max:255',
             'description'=>'required|string',
             'timeLimit'=>'required|integer',
-            'questions'=>'required|array'
+            'questions'=>'required|array',
         ]);
+
+        dd($validator);
 
         $quiz = Quiz::create([
             'user_id' => auth()->id(),
@@ -49,12 +51,12 @@ class QuizController extends Controller
             'slug' => Str::slug(strtotime('now') . '/' . $validator['title']),
         ]);
 
-        dd($quiz);
-
         foreach ($validator['questions'] as $question) {
            $questionItem = $quiz->questions()->create([
                 'name' => $question['quiz'],
             ]);
+
+
             foreach ($question['options'] as $optionKey => $option) {
                 $questionItem->options()->create([
                     'name' => $option,
@@ -79,7 +81,7 @@ class QuizController extends Controller
      */
     public function edit(Quiz $quiz)
     {
-        return view('dashboard.edit-quiz', [
+        return view('dashboard.editquiz', [
             'quiz' => $quiz,
         ]);
     }
@@ -126,6 +128,8 @@ class QuizController extends Controller
     public function destroy(Quiz $quiz)
     {
         $quiz->delete();
+        return to_route('quizzes');
+
     }
 
     public function takequiz(){
