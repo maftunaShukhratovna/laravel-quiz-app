@@ -41,7 +41,6 @@ class QuizController extends Controller
             'questions'=>'required|array',
         ]);
 
-        dd($validator);
 
         $quiz = Quiz::create([
             'user_id' => auth()->id(),
@@ -95,7 +94,7 @@ class QuizController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'required|string',
             'timeLimit' => 'required|integer',
-            'question' => 'required|array',
+            'questions' => 'required|array',
         ]);
 
         $quiz->update([
@@ -106,20 +105,21 @@ class QuizController extends Controller
         ]);
 
         $quiz->questions()->delete();
-
-        foreach ($validator['question'] as $question) {
+        foreach ($validator['questions'] as $question) {
             $questionItem = $quiz->questions()->create([
-                'name' => $question['quiz'],
-            ]);
-            foreach ($question['option'] as $optionKey => $option) {
-                $questionItem->options()->create([
-                    'name' => $option,
-                    'is_correct' => $question['is_correct'] == $optionKey ? 1 : 0,
-                ]);
-            }
-
-        }
-        return to_route('quizzes');
+                 'name' => $question['quiz'],
+             ]);
+ 
+ 
+             foreach ($question['options'] as $optionKey => $option) {
+                 $questionItem->options()->create([
+                     'name' => $option,
+                     'is_correct' => $question['correct'] == $optionKey ? 1 : 0,
+                 ]);
+             }
+         }
+         return to_route('quizzes');
+        
     }
 
     /**

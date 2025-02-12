@@ -22,7 +22,7 @@ Route::prefix('dashboard')->middleware('auth')->group(function(){
     Route::get('/createquiz', [QuizController::class,'create'])->name('createquiz');
     Route::post('/createquiz', [QuizController::class,'store'])->name('storequiz');
 
-    Route::get('/myquizzes/{quiz}', [QuizController::class, 'edit'])->name('myquizzes');
+    Route::get('/myquizzes/{quiz}', [QuizController::class, 'edit'])->name('editquizzes');
     Route::post('/myquizzes/{quiz}/update', [QuizController::class, 'update'])->name('updatequiz');
     Route::delete('/deletequiz/{quiz}', [QuizController::class, 'destroy'])->name('deletequiz');
 

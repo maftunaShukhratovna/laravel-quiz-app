@@ -73,8 +73,8 @@
                         </div>
                         <p class="text-gray-600 mb-4">{{ $quiz->description }}</p>
                         <div class="flex justify-between items-center mb-4">
-                            <span class="text-sm text-gray-500">{{ $quiz->questions_count }}</span>
-                            <span class="text-sm text-gray-500">{{ $quiz->time_limit }}</span>
+                            <span class="text-sm text-gray-500">{{ $quiz->questions_count }} questions</span>
+                            <span class="text-sm text-gray-500">{{ $quiz->time_limit }} minutes</span>
                         </div>
                         <div class="mb-4">
                             <div class="w-full bg-gray-200 rounded-full h-2">
@@ -84,7 +84,7 @@
                         </div>
 
                         <div class="flex gap-2 items-center">
-                            <a href="{{ route('myquizzes', [$quiz]) }}"
+                            <a href="{{ route('editquizzes', [$quiz]) }}"
                                 class="px-4 py-2 text-white bg-indigo-600 hover:bg-indigo-800 rounded-lg shadow-md transition">
                                 Edit
                             </a>
