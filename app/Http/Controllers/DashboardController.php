@@ -15,9 +15,7 @@ class DashboardController extends Controller
     {
         return view('dashboard.myquizzes');
     }
-    public function createQuizzes(){
-        return view('dashboard.createquiz');
-    }
+    
 
     public function statistics()
     {

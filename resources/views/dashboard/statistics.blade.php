@@ -1,6 +1,7 @@
 <x-dashboard.header></x-dashboard.header>
 <div class="bg-gray-100">
 <div class="min-h-screen flex">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Sidebar -->
     <x-dashboard.sidebar></x-dashboard.sidebar>
 
