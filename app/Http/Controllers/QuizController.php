@@ -8,15 +8,17 @@ use App\Models\Quiz;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
+
 class QuizController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
+
     public function index()
     {
         return view('dashboard.myquizzes', [
-            'quizzes' => Quiz::withCount('questions')->orderBy('created_at', 'desc')->get()
+            'quizzes' => Quiz::withCount('questions')->orderBy('created_at', 'desc')->paginate(9)
         ]);
     }
 

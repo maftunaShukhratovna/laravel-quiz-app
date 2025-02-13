@@ -52,69 +52,76 @@
                 </div>
 
                 <!-- Quiz Grid -->
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <!-- Quiz Card 1 -->
-                    @foreach($quizzes as $quiz)
-                    <div class="bg-white rounded-lg shadow-sm p-6">
-                        <div class="flex justify-between items-start mb-4">
-                            <div>
-                                <h3 class="text-lg font-semibold"> {{ $quiz->title }}</h3>
-                                <p class="text-gray-500 text-sm">{{ $quiz->title }}</p>
-                            </div>
-                            <div class="dropdown">
-                                <button class="p-2 hover:bg-gray-100 rounded-full">
-                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                        <path
-                                            d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z">
-                                        </path>
-                                    </svg>
-                                </button>
-                            </div>
-                        </div>
-                        <p class="text-gray-600 mb-4">{{ $quiz->description }}</p>
-                        <div class="flex justify-between items-center mb-4">
-                            <span class="text-sm text-gray-500">{{ $quiz->questions_count }} questions</span>
-                            <span class="text-sm text-gray-500">{{ $quiz->time_limit }} minutes</span>
-                        </div>
-                        <div class="mb-4">
-                            <div class="w-full bg-gray-200 rounded-full h-2">
-                                <div class="bg-green-500 h-2 rounded-full" style="width: 75%"></div>
-                            </div>
-                            <span class="text-sm text-gray-500">75% Completion Rate</span>
-                        </div>
+                <!-- Quiz Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    @foreach($quizzes as $quiz)
+    <div class="bg-white rounded-lg shadow-sm p-6">
+        <div class="flex justify-between items-start mb-4">
+            <div>
+                <h3 class="text-lg font-semibold"> {{ $quiz->title }}</h3>
+                <p class="text-gray-500 text-sm">{{ $quiz->title }}</p>
+            </div>
+            <div class="dropdown">
+                <button class="p-2 hover:bg-gray-100 rounded-full">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path
+                            d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z">
+                        </path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <p class="text-gray-600 mb-4">{{ $quiz->description }}</p>
+        <div class="flex justify-between items-center mb-4">
+            <span class="text-sm text-gray-500">{{ $quiz->questions_count }} questions</span>
+            <span class="text-sm text-gray-500">{{ $quiz->time_limit }} minutes</span>
+        </div>
+        <div class="mb-4">
+            <div class="w-full bg-gray-200 rounded-full h-2">
+                <div class="bg-green-500 h-2 rounded-full" style="width: 75%"></div>
+            </div>
+            <span class="text-sm text-gray-500">75% Completion Rate</span>
+        </div>
 
-                        <div class="flex gap-2 items-center">
-                            <a href="{{ route('editquizzes', [$quiz]) }}"
-                                class="px-4 py-2 text-white bg-indigo-600 hover:bg-indigo-800 rounded-lg shadow-md transition">
-                                Edit
-                            </a>
+        <div class="flex gap-2 items-center">
+            <a href="{{ route('editquizzes', [$quiz]) }}"
+                class="px-4 py-2 text-white bg-indigo-600 hover:bg-indigo-800 rounded-lg shadow-md transition">
+                Edit
+            </a>
 
-                            <button
-                                class="px-4 py-2 text-white bg-green-600 hover:bg-green-800 rounded-lg shadow-md transition">
-                                View Results
-                            </button>
+            <button
+                class="px-4 py-2 text-white bg-green-600 hover:bg-green-800 rounded-lg shadow-md transition">
+                View Results
+            </button>
 
-                            <button
-                                class="px-4 py-2 text-white bg-blue-600 hover:bg-blue-800 rounded-lg shadow-md transition"
-                                onclick="share('{{ $quiz->slug }}')">
-                                Share
-                            </button>
-                            <form action="{{ route('deletequiz', ['quiz' => $quiz->id]) }}" method="POST"
-                                onsubmit="return confirm('Are you sure you want to delete this quiz?');">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit"
-                                    class="px-4 py-2 text-white bg-red-600 hover:bg-red-800 rounded-lg shadow-md transition">
-                                    Delete
-                                </button>
-                            </form>
+            <button
+                class="px-4 py-2 text-white bg-blue-600 hover:bg-blue-800 rounded-lg shadow-md transition"
+                onclick="share('{{ $quiz->slug }}')">
+                Share
+            </button>
+            <form action="{{ route('deletequiz', ['quiz' => $quiz->id]) }}" method="POST"
+                onsubmit="return confirm('Are you sure you want to delete this quiz?');">
+                @csrf
+                @method('DELETE')
+                <button type="submit"
+                    class="px-4 py-2 text-white bg-red-600 hover:bg-red-800 rounded-lg shadow-md transition">
+                    Delete
+                </button>
+            </form>
 
-                        </div>
+        </div>
+    </div>
+    @endforeach
+</div>
 
-                    </div>
-                    @endforeach
+<!-- Pagination Links -->
+<div class="mt-6 flex justify-center">
+    <div class="inline-flex items-center -space-x-px text-sm">
+        {{ $quizzes->links() }}
+    </div>
+</div>
 
-                </div>
+
             </main>
         </div>
     </div>
