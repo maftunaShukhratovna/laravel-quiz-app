@@ -14,7 +14,7 @@
                 <div class="flex justify-between items-center mb-6">
                     <h2 class="text-2xl font-bold text-gray-800">My Quizzes</h2>
                     <div class="flex space-x-4">
-                        <a href="/dashboard/createquizzes"
+                        <a href="/dashboard/createquiz"
                             class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">
                             Create New Quiz
                         </a>

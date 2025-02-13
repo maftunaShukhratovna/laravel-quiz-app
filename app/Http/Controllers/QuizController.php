@@ -15,11 +15,11 @@ class QuizController extends Controller
      */
     public function index()
     {
-        
         return view('dashboard.myquizzes', [
-            'quizzes' => Quiz::withCount('questions')->get()
+            'quizzes' => Quiz::withCount('questions')->orderBy('created_at', 'desc')->get()
         ]);
     }
+
 
     /**
      * Show the form for creating a new resource.
