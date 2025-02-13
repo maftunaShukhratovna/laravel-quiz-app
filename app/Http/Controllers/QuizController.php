@@ -15,12 +15,16 @@ class QuizController extends Controller
      * Display a listing of the resource.
      */
 
-    public function index()
-    {
-        return view('dashboard.myquizzes', [
-            'quizzes' => Quiz::withCount('questions')->orderBy('created_at', 'desc')->paginate(9)
-        ]);
-    }
+     public function index()
+     {
+         return view('dashboard.myquizzes', [
+             'quizzes' => Quiz::where('user_id', auth()->id())
+                 ->withCount('questions')
+                 ->orderBy('created_at', 'desc')
+                 ->paginate(9)
+         ]);
+     }
+     
 
 
     /**
