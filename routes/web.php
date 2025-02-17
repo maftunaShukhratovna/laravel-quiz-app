@@ -26,12 +26,10 @@ Route::prefix('dashboard')->middleware('auth')->group(function(){
 });
 
 
-Route::get('/startquiz/{quiz:slug}', [QuizController::class, 'startquiz'])->middleware('auth')->name('startquiz');
-Route::get('/showquiz/{quiz:slug}', [QuizController::class, 'showquiz'])->middleware('auth')->name('showquiz');
-Route::post('/submitquiz', [QuizController::class, 'storeresults'])->middleware('auth')->name('submitquiz');
-Route::get('/showresults', [QuizController::class, 'showquiz'])->middleware('auth')->name('showresults');
-
-
+Route::get('/showquiz/{slug}', [QuizController::class, 'showquiz'])->middleware('auth')->name('showquiz');
+Route::post('/startquiz/{slug}', [QuizController::class, 'startquiz'])->middleware('auth')->name('startquiz');
+Route::post('/storeresults/{slug}', [QuizController::class, 'storeresults'])->middleware('auth')->name('storeresults');
+Route::get('/showresults/{slug}', [QuizController::class, 'showResults'])->middleware('auth')->name('showresults');
 
 
 Route::middleware('auth')->group(function () {

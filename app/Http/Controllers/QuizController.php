@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Quiz;
 use App\Models\Answer;
 use App\Models\Result;
+use App\Models\Option;
 
 use App\Models\Question;
 use Illuminate\Http\Request;
@@ -145,71 +146,112 @@ class QuizController extends Controller
         return 'slug';
     }
 
-    public function startquiz(Quiz $quiz)
+    public function startquiz(string $slug)
     {
-
-        // dd($quiz);
-        return view('quiz.startquiz', [
-            'quiz' => $quiz,
+        $quiz = Quiz::where('slug', $slug)->with('questions.options')->first();
+        $result = Result::create([
+            'quiz_id' => $quiz->id,
+            'user_id' => auth()->id(),
+            'started_at' => now(),
+            'finished_at' => date('Y-m-d H:i:s', strtotime('+' . $quiz->time_limit . ' minutes')),
         ]);
+        return view('quiz.startquiz', [
+            'quiz' => $quiz->load('questions.options'),
+        ]);
+
     }
     
-    public function showquiz(Quiz $quiz)
+    public function showquiz(string $slug)
     {
+        $quiz = Quiz::where('slug', $slug)->first();
+        $result = Result::query()
+            ->where('quiz_id', $quiz->id)
+            ->where('user_id', auth()->id())
+            ->first();
 
-        return view('quiz.showquiz', [
-            'quiz' => $quiz,
-        ]);
-    }
 
-    public function storeresults(Request $request)
-    {
-        $validator = $request->validate([
-            'quiz_id' => 'required|exists:quizzes,id',
-            'answers' => 'required|array',
-        ]);
-
-        $quiz = Quiz::findOrFail($validator['quiz_id']);
-        $score = 0;
-        $totalQuestions = count($quiz->questions);
-
-        foreach ($validator['answers'] as $questionId => $selectedOptionId) {
-            $question = Question::find($questionId);
-
-            if ($question && $question->correct_option_id == $selectedOptionId) {
-                $score++;
-            }
-
-            Answer::create([
-                'user_id' => auth()->id(),
-                'quiz_id' => $quiz->id,
-                'question_id' => $questionId,
-                'selected_option_id' => $selectedOptionId,
+        if (!$result) {
+            return view('quiz.showquiz', [
+                'quiz' => $quiz,
             ]);
         }
-
-        Result::create([
-            'user_id' => auth()->id(),
-            'quiz_id' => $quiz->id,
-            'score' => $score,
-            'total_questions' => $totalQuestions,
-        ]);
-
-        return to_route('showresults');
+        return 'test !';
         
     }
 
-    public function showresults()
+    public function storeResults( Request $request, string $slug)
     {
-        $result = Result::where('user_id', auth()->id())
-            ->latest()
+        $validator = $request->validate([
+            'answer' => 'required|integer|exists:options,id',
+        ]);
+
+
+        $user_id = auth()->id();
+        $quiz = Quiz::where('slug', $slug)->first();
+
+        $result = Result::where('quiz_id', $quiz->id)
+            ->where('user_id', $user_id)
             ->first();
 
-        return view('quiz.showresults', [
-            'result' => $result,
+        Answer::create([
+            'result_id' => $result->id,
+            'option_id' => $validator['answer'],
         ]);
+
+        if ($result->finished_at <= now()) {
+            return 'Seni vaqting tugagan';
+        }
+
+        return to_route('showresults', $slug);
+
     }
 
+    public function showResults(string $slug)
+{
+    $quiz = Quiz::where('slug', $slug)->first();
+
+    if (!$quiz) {
+        return redirect()->back()->with('error', 'Quiz topilmadi!');
+    }
+
+    $result = Result::query()
+        ->where('quiz_id', $quiz->id)
+        ->where('user_id', auth()->id())
+        ->first();
+
+    if (!$result) {
+        return redirect()->back()->with('error', 'Siz bu testni hali yechmagansiz!');
+    }
+
+  
+    $totalQuestions = Question::where('quiz_id', $quiz->id)->count();
+
+   
+    $correctAnswers = Answer::query()
+        ->where('result_id', $result->id)
+        ->whereHas('option', function ($query) {
+            $query->where('is_correct', true);
+        })
+        ->count();
+
+        $timeTaken = strtotime($result->finished_at) - strtotime($result->started_at);
+
+       
+        $hours = floor($timeTaken / 3600);
+        $minutes = floor(($timeTaken % 3600) / 60);
+        $seconds = $timeTaken % 60;
+        
+       
+        $formattedTime = sprintf('%02d:%02d:%02d', $hours, $minutes, $seconds);
+        
+
+    return view('quiz.showresults', [
+        'quiz' => $quiz,
+        'totalQuestions' => $totalQuestions,
+        'correctAnswers' => $correctAnswers,
+        'time' => $formattedTime,
+    ]);
+}
 
 
 }

@@ -8,6 +8,11 @@ class Answer extends Model
 {
     protected $fillable=[
         'result_id',
-        'question_id'
+        'option_id'
     ];
+    public function option()
+{
+    return $this->belongsTo(Option::class, 'option_id');
+}
+
 }
