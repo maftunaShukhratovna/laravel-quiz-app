@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Option;
-use App\Models\Question;
 use App\Models\Quiz;
+use App\Models\Answer;
+use App\Models\Result;
+
+use App\Models\Question;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -138,8 +140,76 @@ class QuizController extends Controller
 
     }
 
-    public function takequiz(){
-        return view('quiz.takequiz');
+    public function getRouteKeyName()
+    {
+        return 'slug';
     }
+
+    public function startquiz(Quiz $quiz)
+    {
+
+        // dd($quiz);
+        return view('quiz.startquiz', [
+            'quiz' => $quiz,
+        ]);
+    }
+    
+    public function showquiz(Quiz $quiz)
+    {
+
+        return view('quiz.showquiz', [
+            'quiz' => $quiz,
+        ]);
+    }
+
+    public function storeresults(Request $request)
+    {
+        $validator = $request->validate([
+            'quiz_id' => 'required|exists:quizzes,id',
+            'answers' => 'required|array',
+        ]);
+
+        $quiz = Quiz::findOrFail($validator['quiz_id']);
+        $score = 0;
+        $totalQuestions = count($quiz->questions);
+
+        foreach ($validator['answers'] as $questionId => $selectedOptionId) {
+            $question = Question::find($questionId);
+
+            if ($question && $question->correct_option_id == $selectedOptionId) {
+                $score++;
+            }
+
+            Answer::create([
+                'user_id' => auth()->id(),
+                'quiz_id' => $quiz->id,
+                'question_id' => $questionId,
+                'selected_option_id' => $selectedOptionId,
+            ]);
+        }
+
+        Result::create([
+            'user_id' => auth()->id(),
+            'quiz_id' => $quiz->id,
+            'score' => $score,
+            'total_questions' => $totalQuestions,
+        ]);
+
+        return to_route('showresults');
+        
+    }
+
+    public function showresults()
+    {
+        $result = Result::where('user_id', auth()->id())
+            ->latest()
+            ->first();
+
+        return view('quiz.showresults', [
+            'result' => $result,
+        ]);
+    }
+
+
 
 }

@@ -10,9 +10,6 @@ Route::get('/', [HomeController::class,'index'])->name('welcome');
 
 Route::get('/about', [HomeController::class,'about'])->name('about');
 
-Route::get('/takequiz', [QuizController::class,'takeQuiz'])->middleware('auth')->name('takequiz');
-
-
 //Dashboard
 Route::prefix('dashboard')->middleware('auth')->group(function(){
     Route::get('/', [DashboardController::class,'home'])->name('dashboard');
@@ -29,11 +26,13 @@ Route::prefix('dashboard')->middleware('auth')->group(function(){
 });
 
 
+Route::get('/startquiz/{quiz:slug}', [QuizController::class, 'startquiz'])->middleware('auth')->name('startquiz');
+Route::get('/showquiz/{quiz:slug}', [QuizController::class, 'showquiz'])->middleware('auth')->name('showquiz');
+Route::post('/submitquiz', [QuizController::class, 'storeresults'])->middleware('auth')->name('submitquiz');
+Route::get('/showresults', [QuizController::class, 'showquiz'])->middleware('auth')->name('showresults');
 
 
-//Route::get('/dashboard', function () {
-//    return view('dashboard');
-//})->middleware(['auth', 'verified'])->name('dashboard');
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
