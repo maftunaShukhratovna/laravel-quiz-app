@@ -25,6 +25,8 @@ Route::prefix('dashboard')->middleware('auth')->group(function(){
 
 });
 
+Route::post('/profile/avatar', [ProfileController::class, 'updateAvatar'])->name('profile.avatar.update');
+
 
 Route::get('/showquiz/{slug}', [QuizController::class, 'showquiz'])->middleware('auth')->name('showquiz');
 Route::post('/startquiz/{slug}', [QuizController::class, 'startquiz'])->middleware('auth')->name('startquiz');

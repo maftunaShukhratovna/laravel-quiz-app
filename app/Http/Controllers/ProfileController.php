@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\Storage;
 
 class ProfileController extends Controller
 {
@@ -57,4 +58,26 @@ class ProfileController extends Controller
 
         return Redirect::to('/');
     }
+
+    public function updateAvatar(Request $request)
+{
+    $request->validate([
+        'avatar' => ['required', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
+    ]);
+
+    $user = auth()->user();
+
+    // Eski rasmni o‘chirish
+    if ($user->avatar) {
+        Storage::disk('public')->delete($user->avatar);
+    }
+
+    // Yangi rasmni saqlash
+    $path = $request->file('avatar')->store('avatars', 'public');
+    $user->avatar = $path;
+    $user->save();
+
+    return redirect()->back()->with('status', 'Avatar updated successfully');
+}
+
 }
